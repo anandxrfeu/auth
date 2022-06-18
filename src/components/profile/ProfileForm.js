@@ -1,7 +1,6 @@
 import './ProfileForm.css'
 import {useRef, useContext} from 'react'
 import AuthContext from '../../store/auth-context'
-import {Navigate} from 'react-router-dom'
 
 import axios from 'axios'
 
@@ -24,9 +23,7 @@ const ProfileForm = () => {
 
         axios.post(URL, payload)
             .then(response => {
-                console.log(response.data)
-                //authCxt.login(response.data.idToken);
-                //console.log(authCxt.token)
+                authCxt.login(response.data.idToken, null);
             }).catch(err => {
                 console.log(err)
             })
@@ -44,9 +41,7 @@ const ProfileForm = () => {
 
         axios.post(URL, payload)
             .then(response => {
-                //console.log(response.data)
-                authCxt.login(response.data.idToken);
-                //console.log(authCxt.token)
+                authCxt.login(authCxt.token,response.data.displayName );
             }).catch(err => {
                 console.log(err)
             })

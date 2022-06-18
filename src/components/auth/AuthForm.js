@@ -43,7 +43,7 @@ const AuthForm = () => {
 
     axios.post(url, payLoad)
         .then( response => {
-          authCtx.login(response.data.idToken);
+          authCtx.login(response.data.idToken, null);
         })
         .catch( err => {
           if(err.response && err.response.data && err.response.data.error && err.response.data.error.message)

@@ -8,21 +8,8 @@ const MainNavigation = () => {
 
   const authCxt = useContext(AuthContext)
   const isLoggedIn = authCxt.isLoggedIn
+  const loggedInUserName = authCxt.name;
   
-  useEffect (()=>{
-    const payload = {
-      idToken: authCxt.token
-    }
-    authCxt.token && axios.post('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyD7a8bSmuRMCQy271QVQ42Qptjg9PWq41E',payload)
-      .then(response => {
-        console.log(response.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
-  },[authCxt.token])
-
   const logoutHandler = () => {
     authCxt.logout()
   }
@@ -39,9 +26,10 @@ const MainNavigation = () => {
             <Link to='/login'>Login</Link>
           </li>
         )}
+
         {isLoggedIn  && (
           <li>
-            <Link to='/profile'>Profile</Link>
+            <Link to='/profile'>{ loggedInUserName!=null ? `Hi, ${loggedInUserName}` :'Profile'}</Link>
           </li>
         )}
 
