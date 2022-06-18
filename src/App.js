@@ -1,24 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import {useContext} from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import AuthPage from './pages/AuthPage';
+import UserProfile from './components/profile/UserProfile';
+import Layout from './components/layout/Layout';
+import AuthContext from './store/auth-context';
 
 function App() {
+
+  const authCxt = useContext(AuthContext)
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Routes>
+          <Route path='/' element={<HomePage />} />
+           {!authCxt.isLoggedIn && (<Route path='/login' element={<AuthPage />} />)}
+          <Route 
+                path='/profile' 
+                element={ authCxt.isLoggedIn ? <UserProfile /> : <Navigate to="/login"/>} 
+          />
+          <Route path='*' element={<Navigate to="/"/>}  />
+        </Routes>
+      </Layout>
   );
 }
 
