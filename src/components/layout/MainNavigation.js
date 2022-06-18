@@ -1,13 +1,28 @@
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import AuthContext from '../../store/auth-context';
 import { Link } from 'react-router-dom';
 import './MainNavigation.css'
+import axios from 'axios';
 
 const MainNavigation = () => {
 
   const authCxt = useContext(AuthContext)
   const isLoggedIn = authCxt.isLoggedIn
   
+  useEffect (()=>{
+    const payload = {
+      idToken: authCxt.token
+    }
+    authCxt.token && axios.post('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyD7a8bSmuRMCQy271QVQ42Qptjg9PWq41E',payload)
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  },[authCxt.token])
+
   const logoutHandler = () => {
     authCxt.logout()
   }
