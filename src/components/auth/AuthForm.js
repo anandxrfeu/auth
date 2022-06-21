@@ -12,7 +12,9 @@ const AuthForm = () => {
   const authCtx = useContext(AuthContext)
 
   const emailInputRef = useRef();
-  const passwordInputRef = useRef();
+  const passwordInputRef = useRef();  
+  const nameInputRef = useRef();
+
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -27,29 +29,62 @@ const AuthForm = () => {
             password: enteredPassword,
             returnSecureToken: true,
     }
-    // Add Validation
+    // Add form Validation
 
     setIsLoading(true)
     let url;
 
     if (isLogin) {
       url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD7a8bSmuRMCQy271QVQ42Qptjg9PWq41E'
+      axios.post(url, payLoad)
+      .then( response => {
+        authCtx.login(response.data.idToken, response.data.displayName);
+      })
+      .catch( err => {
+        if(err.response && err.response.data && err.response.data.error && err.response.data.error.message)
+        alert(err.response.data.error.message) //you can set error message on state and show on a model
+      })
 
 
-    } else {
+    } else { //sign up
       url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD7a8bSmuRMCQy271QVQ42Qptjg9PWq41E'
+      axios.post(url, payLoad)
+      .then( response => {
+        //authCtx.login(response.data.idToken, null);
+        console.log('New User created', response.data)
+        // update display name
+        const URL = 'https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyD7a8bSmuRMCQy271QVQ42Qptjg9PWq41E'
+        const payload = {
+            idToken: response.data.idToken,
+            displayName: nameInputRef.current.value,
+            photoUrl:'',
+            returnSecureToken: true
+        }
+
+        axios.post(URL, payload)
+            .then(response => {
+              authCtx.login(authCtx.token,response.data.displayName );
+              console.log('User given user name', response.data)
+
+              // save user information in new db
+              
+
+
+            }).catch(err => {
+                console.log(err)
+            })
+
+
+      })
+      .catch( err => {
+        if(err.response && err.response.data && err.response.data.error && err.response.data.error.message)
+        alert(err.response.data.error.message) //you can set error message on state and show on a model
+      })
       
     }
 
-    axios.post(url, payLoad)
-        .then( response => {
-          authCtx.login(response.data.idToken, null);
-        })
-        .catch( err => {
-          if(err.response && err.response.data && err.response.data.error && err.response.data.error.message)
-          alert(err.response.data.error.message) //you can set error message on state and show on a model
-        })
-        setIsLoading(false)
+   
+    setIsLoading(false)
 
   }
 
@@ -60,6 +95,14 @@ const AuthForm = () => {
     <section className='auth'>
       <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
       <form onSubmit={submitHandler}>
+      <div className={!isLogin ? 'control' : 'hide'}>
+          <label htmlFor='name'>Your Name</label>
+          <input 
+            type='text' 
+            ref={nameInputRef} 
+            id='name' required />
+        </div>
+
         <div className={'control'}>
           <label htmlFor='email'>Your Email</label>
           <input 

@@ -14,6 +14,8 @@ const MainNavigation = () => {
     authCxt.logout()
   }
 
+  console.log(loggedInUserName)
+
   return (
     <header className='header'>
       <Link to='/'>

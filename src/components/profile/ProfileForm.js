@@ -47,6 +47,23 @@ const ProfileForm = () => {
             })
     }
 
+    const deleteHandler  = (event) => {
+        event.preventDefault()
+
+        const URL = 'https://identitytoolkit.googleapis.com/v1/accounts:delete?key=AIzaSyD7a8bSmuRMCQy271QVQ42Qptjg9PWq41E'
+        const payload = {
+            idToken: authCxt.token
+        }
+
+        axios.post(URL, payload)
+            .then(response => {
+                authCxt.logout()
+            }).catch(err => {
+                console.log(err)
+            })
+
+    }
+
     return (
         <>
             <form className='form' onSubmit={changeNameHandler}>
@@ -69,6 +86,14 @@ const ProfileForm = () => {
                     <button>Change Password</button>
                 </div>
             </form>
+
+            <form className='form' onSubmit={deleteHandler}>
+                <div className='action'>
+                    <button>Delete Account</button>
+                </div>
+            </form>
+
+
 
         </>
       );
